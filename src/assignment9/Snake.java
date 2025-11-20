@@ -33,47 +33,44 @@ public class Snake {
 			deltaX = MOVEMENT_SIZE;
 		}
 	}
+	public BodySegment changeValX(BodySegment segment, double x){
+		segment.setLastX(segment.getX());
+		segment.setChangeX(segment.getX()-x);
+		segment.setX(x);
+		return segment;
+	}
+	public BodySegment changeValY(BodySegment segment, double y){
+		segment.setLastY(segment.getY());
+		segment.setChangeY(segment.getX()-y);
+		segment.setY(y);
+		return segment;
+	}
 	public BodySegment changeX(BodySegment segment, double x){
+		segment.setLastX(segment.getX());
+		segment.setChangeX(x);
 		segment.setX(segment.getX()+x);
 		return segment;
 	}
 	public BodySegment changeY(BodySegment segment, double y){
+		segment.setLastY(segment.getY());
+		segment.setChangeY(y);
 		segment.setY(segment.getY()+y);
 		return segment;
 	}
+	
 	/**
 	 * Moves the snake by updating the position of each of the segments
 	 * based on the current direction of travel
 	 */
-	public BodySegment moveToward(double xOther, double yOther, BodySegment segment) {
-		double xVector = xOther - segment.getX();
-		double yVector = yOther - segment.getY();
-		if (xVector>.01||xVector<-.01){
-			xVector = (xVector/Math.abs(xVector))*MOVEMENT_SIZE;
-		}
-		else {
-			xVector=0;
-		}
-		if (yVector>.01||yVector<-.01){
-			yVector = (yVector/Math.abs(yVector))*MOVEMENT_SIZE;
-		}
-		else{
-			yVector=0;
-		}
-		if (Math.abs(xVector)>Math.abs(yVector)){
-			this.changeX(segment, xVector);
-		}
-		else{
-			this.changeY(segment, yVector);
-		}
-		return segment;
-	}
 	public void move() {
-		segments.set(segments.size()-1, this.changeX(segments.getLast(), deltaX));
-		segments.set(segments.size()-1, this.changeY(segments.getLast(), deltaY));
-		for (int i = segments.size()-2; i >= 0; i--) {
-			segments.set(i, moveToward(segments.get(i+1).getX(), segments.get(i+1).getY(), segments.get(i)));
-		}	
+		segments.set(0, this.changeX(segments.getFirst(), deltaX));
+		segments.set(0, this.changeY(segments.getFirst(), deltaY));
+		for (int i = 1; i<segments.size(); i++){
+			segments.set(i, this.changeValX(segments.get(i), segments.get(i-1).getLastX()));
+			segments.set(i, this.changeValY(segments.get(i), segments.get(i-1).getLastY()));
+			//segments.set(i, this.changeX(segments.get(i), segments.get(i-1).getChangeX()));
+			//segments.set(i, this.changeY(segments.get(i), segments.get(i-1).getChangeY()));
+		}
 	}
 	
 	/**
@@ -91,8 +88,8 @@ public class Snake {
 	 * @return true if the snake successfully ate the food
 	 */
 	public boolean eatFood(Food f) {
-		if (Math.sqrt(Math.pow(f.getX()-segments.getLast().getX(),2)+Math.pow(f.getY()-segments.getLast().getY(),2))<=(SEGMENT_SIZE+Food.FOOD_SIZE)){
-			segments.add(new BodySegment(segments.getFirst().getX()+SEGMENT_SIZE, segments.getFirst().getY(), SEGMENT_SIZE));
+		if (Math.sqrt(Math.pow(f.getX()-segments.getFirst().getX(),2)+Math.pow(f.getY()-segments.getFirst().getY(),2))<=(SEGMENT_SIZE+Food.FOOD_SIZE)){
+			segments.add(new BodySegment(segments.getLast().getLastX(), segments.getLast().getLastY(), SEGMENT_SIZE));
 			return true;
 		}
 		else{
@@ -105,10 +102,10 @@ public class Snake {
 	 * @return whether or not the head is in the bounds of the window
 	 */
 	public boolean isInbounds() {
-		if ((segments.getLast().getX()>1)||(segments.getLast().getX()<0)){
+		if ((segments.getFirst().getX()>1)||(segments.getFirst().getX()<0)){
 		return false;
 	}
-	if((segments.getLast().getY()>1)||(segments.getLast().getY()<0)){
+	if((segments.getFirst().getY()>1)||(segments.getFirst().getY()<0)){
 		return false;
 		
 	}

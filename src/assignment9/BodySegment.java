@@ -6,7 +6,41 @@ import edu.princeton.cs.introcs.StdDraw;
 
 public class BodySegment {
 
-	private double x, y, size;
+	private double x, y, size, changeX, changeY, lastX, lastY;
+	
+
+	public double getLastX() {
+		return lastX;
+	}
+
+	public void setLastX(double lastX) {
+		this.lastX = lastX;
+	}
+
+	public double getLastY() {
+		return lastY;
+	}
+
+	public void setLastY(double lastY) {
+		this.lastY = lastY;
+	}
+
+	public double getChangeX() {
+		return changeX;
+	}
+
+	public void setChangeX(double changeX) {
+		this.changeX = changeX;
+	}
+
+	public double getChangeY() {
+		return changeY;
+	}
+
+	public void setChangeY(double changeY) {
+		this.changeY = changeY;
+	}
+
 	public double getX() {
 		return x;
 	}
@@ -44,6 +78,10 @@ public class BodySegment {
 	public BodySegment(double x, double y, double size) {
 		this.x = x;
 		this.y = y;
+		this.lastX = x;
+		this.lastY = y;
+		this.changeX = 0;
+		this.changeY = 0;
 		this.size = size;
 		this.color = Color.GREEN;
 	}
